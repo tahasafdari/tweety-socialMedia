@@ -9,16 +9,14 @@ import logo from "../assests/t.png";
 import Pins from "./Pins";
 
 import { userQuery } from "../utility/data";
+import { fectUser } from "../utility/fetchUser";
 
 const Home = () => {
   const [toggleSidebar, setToggleSidebar] = useState(false);
   const [user, setUser] = useState();
   const scrollRef = useRef(null);
 
-  const userInfo =
-    localStorage.getItem("items") !== "undefined"
-      ? JSON.parse(localStorage.getItem("items"))
-      : localStorage.clear();
+  const userInfo = fectUser();
 
   useEffect(() => {
     const query = userQuery(userInfo?.sub);
@@ -50,7 +48,7 @@ const Home = () => {
             <img
               src={user?.image}
               alt="user-pic"
-              className="w-11 h-12 rounded-full"
+              className="w-12 h-12 rounded-full"
             />
           </Link>
         </div>
