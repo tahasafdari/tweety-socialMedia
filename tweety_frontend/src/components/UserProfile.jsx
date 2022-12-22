@@ -29,6 +29,11 @@ const UserProfile = () => {
   const navigate = useNavigate();
   const { userId } = useParams();
 
+  const User =
+    localStorage.getItem("user") !== "undefined"
+      ? JSON.parse(localStorage.getItem("user"))
+      : localStorage.clear();
+
   const googleLogout = () => {
     localStorage.clear();
 
@@ -36,7 +41,7 @@ const UserProfile = () => {
   };
 
   const refreshPage = (event) => {
-    //window.location.reload(false);
+    window.location.reload(false);
     event.preventDefault();
   };
 
@@ -56,7 +61,6 @@ const UserProfile = () => {
       });
     } else {
       const savedPinsQuery = userSavedPinsQuery(userId);
-
       client.fetch(savedPinsQuery).then((data) => {
         setPins(data);
       });

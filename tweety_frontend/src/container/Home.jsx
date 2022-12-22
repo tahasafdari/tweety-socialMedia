@@ -9,14 +9,14 @@ import logo from "../assests/t.png";
 import Pins from "./Pins";
 
 import { userQuery } from "../utility/data";
-import { fectUser } from "../utility/fetchUser";
+import { fetchUser } from "../utility/fetchUser";
 
 const Home = () => {
   const [toggleSidebar, setToggleSidebar] = useState(false);
   const [user, setUser] = useState();
   const scrollRef = useRef(null);
 
-  const userInfo = fectUser();
+  const userInfo = fetchUser();
 
   useEffect(() => {
     const query = userQuery(userInfo?.sub);

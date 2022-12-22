@@ -8,8 +8,8 @@ import { pinDetailMorePinQuery, pinDetailQuery } from "../utility/data";
 import Spinner from "./Spinner";
 
 const PinDetail = ({ user }) => {
-  const [pins, setPins] = useState(null);
-  const [pinDetails, setpinDetails] = useState(null);
+  const [pins, setPins] = useState();
+  const [pinDetails, setpinDetails] = useState();
   const [comment, setComment] = useState("");
   const [addingComment, setAddingComment] = useState(false);
   const { pinId } = useParams();
@@ -17,11 +17,12 @@ const PinDetail = ({ user }) => {
   const fetchPinDetails = () => {
     const query = pinDetailQuery(pinId);
     if (query) {
-      client.fetch(query).then((data) => {
+      client.fetch(`${query}`).then((data) => {
         setpinDetails(data[0]);
+        console.log(data);
         if (data[0]) {
-          const query = pinDetailMorePinQuery(data[0]);
-          client.fetch(query).then((response) => {
+          const query1 = pinDetailMorePinQuery(data[0]);
+          client.fetch(query1).then((response) => {
             setPins(response);
           });
         }
@@ -39,15 +40,14 @@ const PinDetail = ({ user }) => {
 
       client
         .patch(pinId)
-        .setIfMissing({ comment: [] })
+        .setIfMissing({ comments: [] })
         .insert("after", "comments[-1]", [
           {
             comment,
             _key: uuidv4(),
-            postedBy: { _type: "postedBy" },
+            postedBy: { _type: "postedBy", _ref: user?.sub },
           },
         ])
-
         .commit()
         .then(() => {
           fetchPinDetails();

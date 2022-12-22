@@ -5,17 +5,18 @@ import { MdDownloadForOffline } from "react-icons/md";
 import { AiTwotoneDelete } from "react-icons/ai";
 import { BsFillArrowUpRightCircleFill } from "react-icons/bs";
 import { urlFor, client } from "../client";
-import { fectUser } from "../utility/fetchUser";
+import { fetchUser } from "../utility/fetchUser";
 
 const Pin = ({ pin: { postedBy, image, _id, destination, save } }) => {
   const [postHovered, setPostHovered] = useState(false);
   const [savePost, setSavePost] = useState(false);
 
   const Navigate = useNavigate();
-  const user = fectUser();
+  const user = fetchUser();
 
-  const alreadySaved = !!save?.filter((item) => item.postedBy.sub === user.sub)
-    ?.length;
+  const alreadySaved = !!save?.filter(
+    (item) => item?.postedBy?._id === user?.sub
+  )?.length;
 
   const savePin = (id) => {
     if (!alreadySaved) {
@@ -27,10 +28,10 @@ const Pin = ({ pin: { postedBy, image, _id, destination, save } }) => {
         .insert("after", "save[-1]", [
           {
             _key: uuidv4,
-            userId: user.sub,
+            userId: user?.sub,
             postedBy: {
               _type: "postedBy",
-              _ref: user.sub,
+              _ref: user?.sub,
             },
           },
         ])
@@ -113,7 +114,7 @@ const Pin = ({ pin: { postedBy, image, _id, destination, save } }) => {
                     : destination}
                 </a>
               )}
-              {postedBy?._id === user.sub && (
+              {postedBy?._id === user?.sub && (
                 <button
                   type="button"
                   onClick={(event) => {
