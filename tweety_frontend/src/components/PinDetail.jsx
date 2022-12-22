@@ -39,12 +39,12 @@ const PinDetail = ({ user }) => {
 
       client
         .patch(pinId)
-        .setIfMissing({ comments: [] })
+        .setIfMissing({ comment: [] })
         .insert("after", "comments[-1]", [
           {
             comment,
             _key: uuidv4(),
-            postedBy: { _type: "postedBy", _ref: user._id },
+            postedBy: { _type: "postedBy" },
           },
         ])
 
@@ -52,7 +52,7 @@ const PinDetail = ({ user }) => {
         .then(() => {
           fetchPinDetails();
           setComment("");
-          setAddingComment(true);
+          setAddingComment(false);
         });
     }
   };
@@ -60,40 +60,42 @@ const PinDetail = ({ user }) => {
   if (!pinDetails) return <Spinner />;
 
   return (
-    <div
-      className="flex xl-flex-row flex-col m-auto bg-white "
-      style={{ maxWidth: "1500px", borderRadius: "32px" }}
-    >
-      <div className="flex justify-center items-center md:items-start flex-initial">
-        <img
-          className="rounded-t-3xl rounded-b-lg"
-          src={pinDetails?.image && urlFor(pinDetails.image).url()}
-          alt="user-post"
-        />
-      </div>
-      <div className="w-full p-5 flex-1 xl:min-w-620">
-        <div className="flex items-center justify-between">
-          <div className="flex gap-2 items-center">
-            <a
-              href={`${pinDetails.image?.asset?.url}?dl=`}
-              download
-              onClick={(event) => event.stopPropagation()}
-              className="bg-white w-9 h-9 rounded-full flex items-center cursor-pointer justify-center text-dark text-xl opacity-75 hover:shadow-md outline-none"
-            >
-              {" "}
-              <MdDownloadForOffline />{" "}
+    <>
+      <div
+        className="flex xl-flex-row flex-col m-auto bg-white "
+        style={{ maxWidth: "1500px", borderRadius: "32px" }}
+      >
+        <div className="flex justify-center items-center md:items-start flex-initial">
+          <img
+            className="rounded-t-3xl rounded-b-lg"
+            src={pinDetails?.image && urlFor(pinDetails.image).url()}
+            alt="user-post"
+          />
+        </div>
+        <div className="w-full p-5 flex-1 xl:min-w-620">
+          <div className="flex items-center justify-between">
+            <div className="flex gap-2 items-center">
+              <a
+                href={`${pinDetails.image?.asset?.url}?dl=`}
+                download
+                onClick={(event) => event.stopPropagation()}
+                className="bg-white w-9 h-9 rounded-full flex items-center cursor-pointer justify-center text-dark text-xl opacity-75 hover:shadow-md outline-none"
+              >
+                {" "}
+                <MdDownloadForOffline />{" "}
+              </a>
+            </div>
+            <a href={pinDetails.destination} target="_blank" rel="noreferrer">
+              {pinDetails.destination}
             </a>
           </div>
-          <a href={pinDetails.destination} target="_blank" rel="noreferrer">
-            {pinDetails.destination}
-          </a>
-        </div>
-        <div>
-          <h1 className="text-4xl font-bold break-words mt-3">
-            {pinDetails.title}
-          </h1>
+          <div>
+            <h1 className="text-4xl font-bold break-words mt-3">
+              {pinDetails.title}
+            </h1>
 
-          <p className="mt-3 ">{pinDetails.about}</p>
+            <p className="mt-3 ">{pinDetails.about}</p>
+          </div>
 
           <Link
             to={`user-profile/${pinDetails.postedBy?._id}`}
@@ -116,7 +118,7 @@ const PinDetail = ({ user }) => {
                 key={item.comment}
               >
                 <img
-                  src={item.postedBy.image}
+                  src={item.postedBy?.image}
                   alt="user-profile"
                   className="w-10 h-10 rounded-4 cursor-pointer"
                 />
@@ -128,10 +130,10 @@ const PinDetail = ({ user }) => {
             ))}
           </div>
           <div className="flex flex-wrap mt-6 gap-3 ">
-            <Link to={`user-profile/${pinDetails.postedBy?._id}`}>
+            <Link to={`user-profile/${user._id}`}>
               <img
                 className="w-10 h-10 rounded-full cursor-pointer"
-                src={pinDetails.postedBy?.image}
+                src={user.image}
                 alt="user-profile"
               />
             </Link>
@@ -152,7 +154,18 @@ const PinDetail = ({ user }) => {
           </div>
         </div>
       </div>
-    </div>
+
+      {pins?.length > 0 ? (
+        <>
+          <h2 className="text-center font-bold text-2xl mt-8 mb-4 ">
+            More like this
+          </h2>
+          <MasonryLayout Pins={pins} />
+        </>
+      ) : (
+        <Spinner />
+      )}
+    </>
   );
 };
 
