@@ -45,7 +45,7 @@ const PinDetail = ({ user }) => {
           {
             comment,
             _key: uuidv4(),
-            postedBy: { _type: "postedBy", _ref: user?.sub },
+            postedBy: { _type: "postedBy", _ref: user?._id },
           },
         ])
         .commit()
@@ -112,7 +112,7 @@ const PinDetail = ({ user }) => {
           </Link>
           <h2 className="mt-5 text-2xl "> Comments </h2>
           <div className="max-h-370 overflow-y-auto">
-            {pinDetails?.comment?.map((item) => (
+            {pinDetails?.comments?.map((item) => (
               <div
                 className="flex gap-2 mt-5 items-center bg-white rounded-lg"
                 key={item.comment}
@@ -125,6 +125,7 @@ const PinDetail = ({ user }) => {
                 <div className="flex flex-col ">
                   <p className="font-bold">{item.postedBy?.userName}</p>
                   <p>{item.comment}</p>
+                  {console.log(item.comment)}
                 </div>
               </div>
             ))}
